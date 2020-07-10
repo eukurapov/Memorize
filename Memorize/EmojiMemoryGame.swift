@@ -25,7 +25,7 @@ class EmojiMemoryGame: ObservableObject {
     static func createMemoryGame(for theme: Theme) -> MemoryGame<String> {
         var emojis = theme.emojis
         emojis.shuffle()
-        return MemoryGame<String>(numberOfPairsOfCards: theme.numberOfPairsOfCards) { pairIndex in
+        return MemoryGame<String>(numberOfPairsOfCards: theme.numberOfPairs) { pairIndex in
             return emojis[pairIndex]
         }
     }
@@ -43,8 +43,13 @@ class EmojiMemoryGame: ObservableObject {
     // MARK: - Access to the Model
     
     var cards: Array<MemoryGame<String>.Card> { model.cards }
-    var cardColor: Color { return theme.cardStyle.color }
-    var cardGradient: Gradient? { return theme.cardStyle.gradient }
+    var cardColor: Color { return Color(theme.cardStyle.color) }
+    var cardGradient: Gradient? {
+        if let gradientColors = theme.cardStyle.gradientColors {
+            return Gradient(colors: gradientColors.map { Color($0) } )
+        }
+        return nil
+    }
     var themeName: String { return theme.name }
     var score: Int { return model.score }
     
@@ -53,59 +58,13 @@ class EmojiMemoryGame: ObservableObject {
     func newGame(with theme: Theme? = nil) {
         self.theme = theme ?? EmojiMemoryGame.themes.randomElement()!
         self.model = EmojiMemoryGame.createMemoryGame(for: self.theme)
+        
+        print(self.theme.json?.utf8 ?? "")
     }
     
     func choose(card: MemoryGame<String>.Card) {
         model.choose(card: card)
         //restartTimer()
-    }
-    
-    struct Theme {
-        static let halloween = Theme(name: "Halloween",
-                                     emojis: ["👻", "🎃", "🕷", "🧙‍♀️", "🕯"],
-                                     cardStyle: CardStyle(color: .orange))
-        static let sports = Theme(name: "Sports",
-                                  emojis: ["🏃‍♂️", "⚽️", "🏀", "🎾", "🥋", "🥌", "🏋️", "🥇", "🏓", "🏒"],
-                                  cardStyle: CardStyle(color: .green, gradient: Gradient(colors: [.green, .blue])),
-                                  numberOfPairsOfCards: 10)
-        static let animals = Theme(name: "Animals",
-                                   emojis: ["🐶", "🐱", "🐭", "🦊", "🐼", "🐨", "🐷"],
-                                   cardStyle: CardStyle(color: .pink, gradient: Gradient(colors: [.pink, .yellow])))
-        static let faces = Theme(name: "Faces",
-                                 emojis: ["😀", "🥰", "🤪", "😎", "🤬", "😱", "🥶", "🤯", "🤢", "🥵", "😘", "🤠"],
-                                 cardStyle: CardStyle(color: .blue, gradient: Gradient(colors: [.blue, .purple])))
-        static let transport = Theme(name: "Transport",
-                                emojis: ["🚗", "🚕", "🚜", "🚒", "🏎", "🚑", "🚓"],
-                                cardStyle: CardStyle(color: .purple, gradient: Gradient(colors: [.purple, .orange])),
-                                numberOfPairsOfCards: 5)
-        
-        let name: String
-        let emojis: [String]
-        let cardStyle: CardStyle
-        private var numberOfPairs: Int?
-        
-        init(name: String, emojis: [String], cardStyle: CardStyle, numberOfPairsOfCards: Int? = nil) {
-            self.name = name
-            self.emojis = emojis
-            self.cardStyle = cardStyle
-            if let numberOfPairsOfCards = numberOfPairsOfCards {
-                self.numberOfPairsOfCards = numberOfPairsOfCards
-            }
-        }
-        
-        private(set) var numberOfPairsOfCards: Int {
-            get {
-                numberOfPairs ?? Int.random(in: 2...emojis.count)
-            }
-            set {
-                numberOfPairs = min(newValue, emojis.count)
-            }
-        }
-        
-        struct CardStyle {
-            var color: Color
-            var gradient: Gradient?
-        }
     }
     
 }
