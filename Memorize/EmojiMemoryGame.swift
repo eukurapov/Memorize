@@ -12,8 +12,6 @@ import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
     
-    private static let themes: [Theme] = [.halloween, .animals, .sports, .transport, .faces]
-    
     @Published private var model: MemoryGame<String>!
     private var theme: Theme!
     private var hidingTimer: Timer?
@@ -56,7 +54,7 @@ class EmojiMemoryGame: ObservableObject {
     // MARK: - Intent(s)
     
     func newGame(with theme: Theme? = nil) {
-        self.theme = theme ?? EmojiMemoryGame.themes.randomElement()!
+        self.theme = theme ?? .any
         self.model = EmojiMemoryGame.createMemoryGame(for: self.theme)
         
         print(self.theme.json?.utf8 ?? "")

@@ -1,42 +1,12 @@
 //
-//  ContentView.swift
+//  CardView.swift
 //  Memorize
 //
-//  Created by Evgeniy Kurapov on 22.05.2020.
+//  Created by Eugene Kurapov on 14.07.2020.
 //  Copyright © 2020 Evgeniy Kurapov. All rights reserved.
 //
 
 import SwiftUI
-
-struct ContentView: View {
-    
-    @ObservedObject var viewModel: EmojiMemoryGame
-    
-    var body: some View {
-        VStack {
-            Text(viewModel.themeName)
-                .font(Font.largeTitle)
-            HStack {
-                Button("New Game",
-                       action: { withAnimation(.easeInOut) { self.viewModel.newGame() } }
-                )
-                Spacer()
-                Text("Score: \(self.viewModel.score)")
-            }
-            .padding()
-            Grid (viewModel.cards) { card in
-                CardView(card: card, gradient: self.viewModel.cardGradient).onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.7)) {
-                        self.viewModel.choose(card: card)
-                    }
-                }
-                .padding(5)
-            }
-            .padding()
-            .foregroundColor(self.viewModel.cardColor)
-        }
-    }
-}
 
 struct CardView: View {
     var card: MemoryGame<String>.Card
@@ -45,7 +15,7 @@ struct CardView: View {
     var body: some View {
         GeometryReader { geometry in
             self.body(for: geometry.size)
-        }
+        }.aspectRatio(3/4, contentMode: .fit)
     }
     
     @State private var animatedBonusRamaining: Double = 0
@@ -88,32 +58,3 @@ struct CardView: View {
     
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let game = EmojiMemoryGame()
-        game.choose(card: game.cards[0])
-        return ContentView(viewModel: game)
-    }
-}

@@ -10,6 +10,8 @@ import SwiftUI
 
 struct Theme: Codable {
     
+    static let defaults: [Theme] = [.halloween, .animals, .sports, .transport, .faces]
+    
     static let halloween = Theme(name: "Halloween",
                                  emojis: ["👻", "🎃", "🕷", "🧙‍♀️", "🕯"],
                                  cardStyle: CardStyle(color: .orange),
@@ -31,10 +33,10 @@ struct Theme: Codable {
                             cardStyle: CardStyle(color: .purple, gradientColors: [.purple, .orange]),
                             numberOfPairsOfCards: 5)
     
-    let name: String
-    let emojis: [String]
-    let cardStyle: CardStyle
-    let numberOfPairs: Int
+    var name: String
+    var emojis: [String]
+    var cardStyle: CardStyle
+    var numberOfPairs: Int
     
     init(name: String, emojis: [String], cardStyle: CardStyle, numberOfPairsOfCards: Int) {
         self.name = name
@@ -53,6 +55,10 @@ struct Theme: Codable {
         } else {
             return nil
         }
+    }
+    
+    static var any: Theme {
+        defaults.randomElement()!
     }
     
     struct CardStyle: Codable {
