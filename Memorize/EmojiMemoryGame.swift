@@ -56,8 +56,6 @@ class EmojiMemoryGame: ObservableObject {
     func newGame(with theme: Theme? = nil) {
         self.theme = theme ?? .any
         self.model = EmojiMemoryGame.createMemoryGame(for: self.theme)
-        
-        print(self.theme.json?.utf8 ?? "")
     }
     
     func choose(card: MemoryGame<String>.Card) {
