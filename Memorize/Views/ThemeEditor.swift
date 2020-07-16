@@ -10,14 +10,8 @@ import SwiftUI
 
 struct ThemeEditor: View {
     
-    var theme: Theme
+    @State var theme: Theme
     @Binding var isShowing: Bool
-    
-    @State private var themeName = ""
-    @State private var themeNumberOfPairs = 2
-    @State private var themeEmojis = [String]()
-    @State private var themeColor: UIColor = .white
-    @State private var themeGradientColors: [UIColor]?
     
     @EnvironmentObject var themeStore: ThemeStore
     
@@ -38,46 +32,32 @@ struct ThemeEditor: View {
                 .padding()
             }
             Form {
-                TextField("Theme Name", text: $themeName)
+                TextField("Theme Name", text: $theme.name)
                 Section(header: Text("Add Emoji").font(.headline)) {
-                    AddEmoji(themeEmojis: $themeEmojis)
+                    AddEmoji(themeEmojis: $theme.emojis)
                 }
                 Section(header: Text("Emojis").font(.headline),
                         footer: Text("Double tap an emoji to remove it from the theme").font(.caption)) {
-                            RemoveEmojis(themeEmojis: self.$themeEmojis)
+                            RemoveEmojis(themeEmojis: self.$theme.emojis)
                 }
                 Section(header: Text("Number of pairs").font(.headline)) {
-                    NumberPicker(number: self.$themeNumberOfPairs, max: self.themeEmojis.count)
+                    NumberPicker(number: self.$theme.numberOfPairs, max: self.theme.emojis.count)
                 }
                 Section(header: Text("Color").font(.headline)) {
-                    ColorPicker(color: self.$themeColor)
+                    ColorPicker(color: self.$theme.cardStyle.color)
                 }
                 Section(header: Text("Cover Gradient").font(.headline)) {
-                    GradientPicker(gradientColors: self.$themeGradientColors)
+                    GradientPicker(gradientColors: self.$theme.cardStyle.gradientColors)
                 }
             }
-        }
-        .onAppear {
-            self.themeName = self.theme.name
-            self.themeNumberOfPairs = self.theme.numberOfPairs
-            self.themeEmojis = self.theme.emojis
-            self.themeColor = self.theme.cardStyle.color
-            self.themeGradientColors = self.theme.cardStyle.gradientColors
         }
     }
     
     private func updateTheme() {
         if let index = self.themeStore.themes.firstIndexOf(self.theme) {
-            self.themeStore.themes[index].name = self.themeName
-            self.themeStore.themes[index].numberOfPairs = self.themeNumberOfPairs
-            self.themeStore.themes[index].emojis = self.themeEmojis
-            self.themeStore.themes[index].cardStyle.color = self.themeColor
-            self.themeStore.themes[index].cardStyle.gradientColors = self.themeGradientColors
+            self.themeStore.themes[index] = self.theme
         } else {
-            self.themeStore.themes.append(Theme(name: self.themeName,
-                                                emojis: self.themeEmojis,
-                                                cardStyle: Theme.CardStyle(color: self.themeColor, gradientColors: self.themeGradientColors),
-                                                numberOfPairsOfCards: self.themeNumberOfPairs))
+            self.themeStore.themes.append(self.theme)
         }
     }
 }
