@@ -14,6 +14,7 @@ struct ThemeEditor: View {
     @Binding var isShowing: Bool
     
     @State private var themeName = ""
+    @State private var themeNumberOfPairs = 2
     @State private var themeEmojis = [String]()
     @State private var themeColor: UIColor = .white
     @State private var themeGradientColors: [UIColor]?
@@ -45,16 +46,20 @@ struct ThemeEditor: View {
                         footer: Text("Double tap an emoji to remove it from the theme").font(.caption)) {
                             RemoveEmojis(themeEmojis: self.$themeEmojis)
                 }
-                Section(header: Text("Color")) {
+                Section(header: Text("Number of pairs").font(.headline)) {
+                    NumberPicker(number: self.$themeNumberOfPairs, max: self.themeEmojis.count)
+                }
+                Section(header: Text("Color").font(.headline)) {
                     ColorPicker(color: self.$themeColor)
                 }
-                Section(header: Text("Cover Gradient")) {
+                Section(header: Text("Cover Gradient").font(.headline)) {
                     GradientPicker(gradientColors: self.$themeGradientColors)
                 }
             }
         }
         .onAppear {
             self.themeName = self.theme.name
+            self.themeNumberOfPairs = self.theme.numberOfPairs
             self.themeEmojis = self.theme.emojis
             self.themeColor = self.theme.cardStyle.color
             self.themeGradientColors = self.theme.cardStyle.gradientColors
@@ -64,6 +69,7 @@ struct ThemeEditor: View {
     private func updateTheme() {
         if let index = self.themeStore.themes.firstIndex(where: { $0.name == self.theme.name }) {
             self.themeStore.themes[index].name = self.themeName
+            self.themeStore.themes[index].numberOfPairs = self.themeNumberOfPairs
             self.themeStore.themes[index].emojis = self.themeEmojis
             self.themeStore.themes[index].cardStyle.color = self.themeColor
             self.themeStore.themes[index].cardStyle.gradientColors = self.themeGradientColors
@@ -77,7 +83,7 @@ struct AddEmoji: View {
     @State private var emojisToAdd = ""
     
     var body: some View {
-        ZStack (alignment: .trailing) {
+        HStack {
             TextField("Emojis to add", text: $emojisToAdd)
             Button(action: {
                 self.emojisToAdd.map { String($0) }.forEach { emoji in
@@ -112,6 +118,21 @@ struct RemoveEmojis: View {
         CGFloat((themeEmojis.count - 1) / 6) * 70 + 70
     }
     let fontSize: CGFloat = 40
+    
+}
+
+struct NumberPicker: View {
+    
+    @Binding var number: Int
+    var max: Int
+    
+    var body: some View {
+        HStack {
+            Text("\(number) pairs")
+            Spacer()
+            Stepper("", value: $number, in: 2...max)
+        }
+    }
     
 }
 
