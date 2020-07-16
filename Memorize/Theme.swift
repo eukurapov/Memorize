@@ -33,6 +33,11 @@ struct Theme: Codable {
                             cardStyle: CardStyle(color: .purple, gradientColors: [.purple, .orange]),
                             numberOfPairsOfCards: 5)
     
+    static let untitled = Theme(name: "Untitled",
+                                emojis: ["🤷‍♂️", "❓"],
+                                cardStyle: CardStyle(color: .green),
+                                numberOfPairsOfCards: 2)
+    
     var name: String
     var emojis: [String]
     var cardStyle: CardStyle

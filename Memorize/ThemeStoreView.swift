@@ -38,7 +38,10 @@ struct ThemeStoreView: View {
             .navigationBarTitle("Memorize")
             .navigationBarItems(
                 leading: Button(
-                    action: { print("Add") },
+                    action: {
+                        self.themeToEdit = Theme.untitled
+                        self.showEditor = true
+                },
                     label: { Image(systemName: "plus").imageScale(.large) } ),
                 trailing: EditButton()
             )

@@ -73,6 +73,11 @@ struct ThemeEditor: View {
             self.themeStore.themes[index].emojis = self.themeEmojis
             self.themeStore.themes[index].cardStyle.color = self.themeColor
             self.themeStore.themes[index].cardStyle.gradientColors = self.themeGradientColors
+        } else {
+            self.themeStore.themes.append(Theme(name: self.themeName,
+                                                emojis: self.themeEmojis,
+                                                cardStyle: Theme.CardStyle(color: self.themeColor, gradientColors: self.themeGradientColors),
+                                                numberOfPairsOfCards: self.themeNumberOfPairs))
         }
     }
 }
@@ -104,14 +109,26 @@ struct RemoveEmojis: View {
     
     @Binding var themeEmojis: [String]
     
+    @State var showMinCountAlert: Bool = false
+    
     var body: some View {
         Grid(themeEmojis, id: \.self) { emoji in
             Text(emoji).font(Font.system(size: self.fontSize))
                 .onTapGesture(count: 2) {
-                    self.themeEmojis.removeAll(where: { $0 == emoji } )
+                    if self.themeEmojis.count > 2 {
+                        self.themeEmojis.removeAll(where: { $0 == emoji } )
+                    } else {
+                        self.showMinCountAlert = true
+                    }
             }
         }
         .frame(height: self.height)
+        .alert(isPresented: $showMinCountAlert, content: {
+            Alert(title: Text("Minimum emoji amount"),
+                  message: Text("Please leave at least 2 emojis to play the game"),
+                  dismissButton: .default(Text("OK"))
+            )
+        })
     }
     
     var height: CGFloat {
@@ -131,6 +148,11 @@ struct NumberPicker: View {
             Text("\(number) pairs")
             Spacer()
             Stepper("", value: $number, in: 2...max)
+        }
+        .onAppear {
+            if self.number > self.max {
+                self.number = self.max
+            }
         }
     }
     
