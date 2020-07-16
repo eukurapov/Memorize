@@ -29,26 +29,3 @@ class ThemeStore: ObservableObject {
     }
     
 }
-
-extension Array where Element == Theme {
-    
-    var asDataArray: [Data] {
-        var data = [Data]()
-        for element in self {
-            if let json = element.json {
-                data.append(json)
-            }
-        }
-        return data
-    }
-    
-    init(fromDataArray data: [Data]) {
-        self.init()
-        for json in data {
-            if let theme = Theme.init(from: json) {
-                self.append(theme)
-            }
-        }
-    }
-    
-}
