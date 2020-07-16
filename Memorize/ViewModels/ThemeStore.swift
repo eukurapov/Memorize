@@ -13,14 +13,15 @@ class ThemeStore: ObservableObject {
     
     private static let themesKey = "ThemeStore.Default"
     
-    @Published var themes: [Theme]
+    @Published var themes: [Theme] = []
     
     private var autosave: AnyCancellable?
     
     init() {
         if let userdata = UserDefaults.standard.array(forKey: ThemeStore.themesKey) as? [Data] {
             themes = [Theme](fromDataArray: userdata)
-        } else {
+        }
+        if themes.isEmpty {
             themes = Theme.defaults
         }
         autosave = $themes.sink { value in

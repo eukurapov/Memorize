@@ -67,7 +67,7 @@ struct ThemeEditor: View {
     }
     
     private func updateTheme() {
-        if let index = self.themeStore.themes.firstIndex(where: { $0.name == self.theme.name }) {
+        if let index = self.themeStore.themes.firstIndexOf(self.theme) {
             self.themeStore.themes[index].name = self.themeName
             self.themeStore.themes[index].numberOfPairs = self.themeNumberOfPairs
             self.themeStore.themes[index].emojis = self.themeEmojis

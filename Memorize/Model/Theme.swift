@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct Theme: Codable {
+struct Theme: Codable, Identifiable {
     
     static let defaults: [Theme] = [.halloween, .animals, .sports, .transport, .faces]
     
@@ -38,12 +38,14 @@ struct Theme: Codable {
                                 cardStyle: CardStyle(color: .green),
                                 numberOfPairsOfCards: 2)
     
+    var id: UUID
     var name: String
     var emojis: [String]
     var cardStyle: CardStyle
     var numberOfPairs: Int
     
-    init(name: String, emojis: [String], cardStyle: CardStyle, numberOfPairsOfCards: Int) {
+    init(id: UUID? = nil, name: String, emojis: [String], cardStyle: CardStyle, numberOfPairsOfCards: Int) {
+        self.id = id ?? UUID()
         self.name = name
         self.emojis = emojis
         self.cardStyle = cardStyle
