@@ -10,7 +10,7 @@ import SwiftUI
 
 struct AddEmoji: View {
     
-    @Binding var themeEmojis: [String]
+    @Binding var emojis: [String]
     @State private var emojisToAdd = ""
     
     var body: some View {
@@ -18,8 +18,8 @@ struct AddEmoji: View {
             TextField("Emojis to add", text: $emojisToAdd)
             Button(action: {
                 self.emojisToAdd.map { String($0) }.forEach { emoji in
-                    if !self.themeEmojis.contains(emoji) {
-                        self.themeEmojis.append(emoji)
+                    if !self.emojis.contains(emoji) {
+                        self.emojis.append(emoji)
                     }
                 }
                 self.emojisToAdd = ""

@@ -15,6 +15,8 @@ struct ThemeEditor: View {
     
     @EnvironmentObject var themeStore: ThemeStore
     
+    @State private var showMinCountAlert: Bool = false
+    
     var body: some View {
         VStack {
             ZStack {
@@ -34,11 +36,23 @@ struct ThemeEditor: View {
             Form {
                 TextField("Theme Name", text: $theme.name)
                 Section(header: Text("Add Emoji").font(.headline)) {
-                    AddEmoji(themeEmojis: $theme.emojis)
+                    AddEmoji(emojis: $theme.emojis)
                 }
                 Section(header: Text("Emojis").font(.headline),
                         footer: Text("Double tap an emoji to remove it from the theme").font(.caption)) {
-                            RemoveEmojis(themeEmojis: self.$theme.emojis)
+                            EmojisEditor(emojis: self.theme.emojis) { emoji in
+                                if self.theme.emojis.count > 2 {
+                                    self.theme.emojis.removeAll(where: { $0 == emoji } )
+                                } else {
+                                    self.showMinCountAlert = true
+                                }
+                            }
+                            .alert(isPresented: $showMinCountAlert, content: {
+                                Alert(title: Text("Minimum emoji amount"),
+                                      message: Text("Please leave at least 2 emojis to play the game"),
+                                      dismissButton: .default(Text("OK"))
+                                )
+                            })
                 }
                 Section(header: Text("Number of pairs").font(.headline)) {
                     NumberPicker(number: self.$theme.numberOfPairs, max: self.theme.emojis.count)
@@ -48,6 +62,16 @@ struct ThemeEditor: View {
                 }
                 Section(header: Text("Cover Gradient").font(.headline)) {
                     GradientPicker(gradientColors: self.$theme.cardStyle.gradientColors)
+                }
+                if (!theme.removedEmojis.isEmpty) {
+                    Section(header: Text("Removed Emojis").font(.headline),
+                            footer: Text("Double tap an emoji to recover").font(.caption)) {
+                                EmojisEditor(emojis: self.theme.removedEmojis) { emoji in
+                                    if !self.theme.emojis.contains(emoji) {
+                                        self.theme.emojis.append(emoji)
+                                    }
+                                }
+                    }
                 }
             }
         }

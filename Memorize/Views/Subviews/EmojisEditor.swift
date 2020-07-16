@@ -10,7 +10,7 @@ import SwiftUI
 
 struct EmojisEditor: View {
     
-    @Binding var emojis: [String]
+    var emojis: [String]
     var action: (String) -> ()
     
     var body: some View {

@@ -40,9 +40,22 @@ struct Theme: Codable, Identifiable {
     
     var id: UUID
     var name: String
-    var emojis: [String]
+    var emojis: [String] {
+        didSet(oldEmojis) {
+            let diff = emojis.difference(from: oldEmojis)
+            for change in diff {
+                switch change {
+                case let .insert(_, element, _):
+                    removedEmojis.removeAll(where: { $0 == element } )
+                case let .remove(_, element, _):
+                    removedEmojis.append(element)
+                }
+            }
+        }
+    }
     var cardStyle: CardStyle
     var numberOfPairs: Int
+    private(set) var removedEmojis: [String] = []
     
     init(id: UUID? = nil, name: String, emojis: [String], cardStyle: CardStyle, numberOfPairsOfCards: Int) {
         self.id = id ?? UUID()
